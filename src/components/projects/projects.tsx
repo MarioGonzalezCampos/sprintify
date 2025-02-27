@@ -16,7 +16,6 @@ export const Projects = ( {  } : ProjectsProps ) => {
 
     const pathname = usePathname()
 
-    const projectId = null
     const { open } = useCreateProjectModal()
     const workspaceId = useWorkspaceId()
     const { data } = useGetProjects({ workspaceId })
