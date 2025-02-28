@@ -9,7 +9,9 @@ import { PencilIcon } from 'lucide-react';
 import Link from 'next/link';
 
 type ProjectIdPageProps = {
-    params: { projectId: string };
+    params: Promise<{ 
+        projectId: string 
+    }>;
 }
 
 const ProjectIdPage = async ( { params }: ProjectIdPageProps ) => {
@@ -17,7 +19,7 @@ const ProjectIdPage = async ( { params }: ProjectIdPageProps ) => {
     const user = await getCurrent();
     if (!user) redirect('/sign-in')
 
-    const initialValues = await getProject({ projectId: params.projectId });
+    const initialValues = await getProject({ projectId: (await params).projectId });
 
     if (!initialValues) {
         throw new Error('Project not found')
