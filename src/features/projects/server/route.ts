@@ -6,6 +6,8 @@ import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { z } from "zod";
 import { createProjectSchema, updateProjectSchema } from "../schema";
+import { ProjectTypes } from "../types";
+import { MemberRole } from "@/features/members/types";
 
 
 const app = new Hono()
@@ -108,12 +110,21 @@ const app = new Hono()
         const storage = c.get("storage");
         const user = c.get("user");
 
-        const { workspaceId } = c.req.param();
+        const { projectId } = c.req.param();
         const { name, image } = c.req.valid("form");
 
-        const member = await getMember({ databases, workspaceId, userId: user.$id });
+        const existingProject = await databases.getDocument<ProjectTypes>(
+            DATABASE_ID,
+            PROJECTS_ID,
+            projectId
+        )
 
-        if (!member || member.role !== MemberRole.ADMIN) {
+        const member = await getMember({ 
+            databases, 
+            workspaceId: existingProject.workspaceId, 
+            userId: user.$id });
+
+        if ( !member ) {
             return c.json({ error: "Unauthorized" }, 401);
         }
 
@@ -136,20 +147,18 @@ const app = new Hono()
         } else {
             uploadedImageUrl = image;
         }
-            const workspace = await databases.updateDocument(
+            const project = await databases.updateDocument(
                 DATABASE_ID,
-                WORKSPACES_ID,
-                workspaceId,
+                PROJECTS_ID,
+                projectId,
                 {
                     name,
                     imageUrl: uploadedImageUrl,
                 }
             );
 
-        return c.json({ data: workspace });
-
+        return c.json({ data: project });
     }
-
 )
 
 
