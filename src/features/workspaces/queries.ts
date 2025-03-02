@@ -64,7 +64,7 @@ export const getWorkspace = async ({ workspaceId }: GetWorkspaceProps ) => {
 
     // Si no hay miembros asociados al usuario, retorna un objeto vacío con 0 resultados.
     if (!member) {
-        return null;
+        return new Error('No tienes permisos para acceder a este espacio de trabajo');
     }
 
     // Busca los documentos de los espacios de trabajo asociados a los IDs obtenidos anteriormente.
@@ -85,26 +85,20 @@ type GetWorkspaceInfoProps = {
 };
 
 export const getWorkspaceInfo = async ({ workspaceId }: GetWorkspaceInfoProps ) => {
-
-    try {
         
-        const { databases } = await createSesionClinet();  
+    const { databases } = await createSesionClinet();  
 
-        // Busca los documentos de los espacios de trabajo asociados a los IDs obtenidos anteriormente.
-        const workspace = await databases.getDocument<WorkspaceTypes>(
-            DATABASE_ID,        // ID de la base de datos configurada en el entorno.
-            WORKSPACES_ID,      // ID de la colección de espacios de trabajo en Appwrite.
-            workspaceId         // ID del espacio de trabajo a buscar.
-            
-        );
+    // Busca los documentos de los espacios de trabajo asociados a los IDs obtenidos anteriormente.
+    const workspace = await databases.getDocument<WorkspaceTypes>(
+        DATABASE_ID,        // ID de la base de datos configurada en el entorno.
+        WORKSPACES_ID,      // ID de la colección de espacios de trabajo en Appwrite.
+        workspaceId         // ID del espacio de trabajo a buscar.
+        
+    );
 
-        // Retorna los documentos y el total de resultados encontrados.
-        return {
-            name: workspace.name
-        };
+    // Retorna los documentos y el total de resultados encontrados.
+    return {
+        name: workspace.name
+    };
 
-    } catch {
-        // En caso de error, retorna un objeto vacío con 0 resultados.
-        return null;
-    }
 };
