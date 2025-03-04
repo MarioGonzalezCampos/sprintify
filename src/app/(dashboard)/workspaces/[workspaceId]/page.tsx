@@ -12,7 +12,7 @@ type WorksPaceIdPagePageProps = {
 const WorksPaceIdPage = async ({ params }: WorksPaceIdPagePageProps) => {
 
     const user = await getCurrent();
-    console.log(user);
+    //console.log(user);
     if (!user) redirect("/sign-in");
 
     return (
